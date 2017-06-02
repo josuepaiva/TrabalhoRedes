@@ -38,7 +38,7 @@ public class SMTPConnection {
 		/* SMTP handshake. We need the name of the local machine.
         Send the appropriate SMTP handshake command. */
 		String localhost = InetAddress.getLocalHost().getHostAddress();
-		sendCommand("HELO" + localhost, 220);
+		sendCommand("HELO " + localhost, 250);
 		isConnected = true;
 	}
 	
@@ -46,7 +46,10 @@ public class SMTPConnection {
         correct order. No checking for errors, just throw them to the
         caller. */
 	public void send(Envelope envelope) throws IOException {
-		/* Fill in */
+		sendCommand("MAIL FROM:<" + envelope.Sender + ">", 250);
+		sendCommand("RCPT TO:<" + envelope.Recipient + ">", 250);
+		sendCommand("DATA", 354);
+		sendCommand(envelope.Message.toString() + CRLF + ".", 250);
 		/* Send all the necessary commands to send a message. Call
     sendCommand() to do the dirty work. Do _not_ catch the
     exception thrown from sendCommand(). */
@@ -72,10 +75,11 @@ close the socket. */
 		toServer.writeBytes(command + CRLF);
 		String response = fromServer.readLine();
 		int code = parseReply(response);
+		System.out.println("Received code " + code);
 		/* Check that the server's reply code is the same as the parameter
     rc. If not, throw an IOException. */
 		if(code != rc){
-			throw new IOException("The code Received is different from sent one.");
+			throw new IOException("The code Received is different from sent one. " + command);
 		}
 	}
 	
