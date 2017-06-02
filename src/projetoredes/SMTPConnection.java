@@ -69,13 +69,14 @@ close the socket. */
 	/* Send an SMTP command to the server. Check that the reply code is
     what is is supposed to be according to RFC 821. */
 	private void sendCommand(String command, int rc) throws IOException {
-		/* Fill in */
-		/* Write command to server and read reply from server. */
-		/* Fill in */
-		/* Fill in */
+		toServer.writeBytes(command + CRLF);
+		String response = fromServer.readLine();
+		int code = parseReply(response);
 		/* Check that the server's reply code is the same as the parameter
     rc. If not, throw an IOException. */
-		/* Fill in */
+		if(code != rc){
+			throw new IOException("The code Received is different from sent one.");
+		}
 	}
 	
 	/* Parse the reply line from the server. Returns the reply code. */
