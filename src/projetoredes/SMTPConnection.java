@@ -20,24 +20,25 @@ public class SMTPConnection {
 	private DataOutputStream toServer;
 	private static final int SMTP_PORT = 25;
 	private static final String CRLF = "\r\n";
+	
 	/* Are we connected? Used in close() to determine what to do. */
 	private boolean isConnected = false;
 	
 	/* Create an SMTPConnection object. Create the socket and the
     associated streams. Initialize SMTP connection. */
 	public SMTPConnection(Envelope envelope) throws IOException {
-		// connection = /* Fill in */;
-		//fromServer = /* Fill in */;
-		//toServer = /* Fill in */;
-		/* Fill in */
-		/* Read a line from server and check that the reply code is
-        220.
-        If not, throw an IOException. */
-		/* Fill in */
+		connection = new Socket(envelope.DestAddr, SMTP_PORT);
+		fromServer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		toServer = new DataOutputStream(connection.getOutputStream());
+
+		if(parseReply(fromServer.readLine()) != 220){
+			throw new IOException("The reply code received by the server is not 220.");
+		}
+		
 		/* SMTP handshake. We need the name of the local machine.
         Send the appropriate SMTP handshake command. */
-		String localhost =""; /* Fill in */
-		//sendCommand(" /* Fill in */" );
+		String localhost = InetAddress.getLocalHost().getHostAddress();
+		sendCommand("HELO" + localhost, 220);
 		isConnected = true;
 	}
 	
