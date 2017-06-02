@@ -56,14 +56,14 @@ public class SMTPConnection {
 	/* Close the connection. First, terminate on SMTP level, then
 close the socket. */
 	public void close() {
-		//isConnected = false;
-		//try {
-		//sendCommand( /* Fill in */ );
-		// connection.close();
-		//} catch (IOException e) {
-		//System.out.println("Unable to close connection: " + e);
-		//isConnected = true;
-		//}
+		isConnected = false;
+		try {
+		sendCommand("QUIT", 221);
+			connection.close();
+		}catch (IOException e) {
+			System.out.println("Unable to close connection: " + e);
+			isConnected = true;
+		}
 	}
 	
 	/* Send an SMTP command to the server. Check that the reply code is
