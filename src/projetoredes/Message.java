@@ -15,12 +15,12 @@ public class Message {
     /* The headers and the body of the message. */
     public String Headers;
     public String Body;
-
+    public String subject;
     /* Sender and recipient. With these, we don't need to extract them
        from the headers. */
     private String From;
     private String To;
-
+    
     /* To make it look nicer */
     private static final String CRLF = "\r\n";
 
@@ -28,6 +28,7 @@ public class Message {
        RFC 822 (From, To, Date). */
     public Message(String from, String to, String subject, String text) {
 	/* Remove whitespace */
+        this.subject = subject;
 	From = from.trim();
 	To = to.trim();
 	Headers = "From: " + From + CRLF;

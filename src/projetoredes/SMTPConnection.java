@@ -8,6 +8,15 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 /**
  *
  * @author Lavid
@@ -18,8 +27,9 @@ public class SMTPConnection {
 	/* Streams for reading and writing the socket */
 	private BufferedReader fromServer;
 	private DataOutputStream toServer;
-	private static final int SMTP_PORT = 25;
+	private static final int SMTP_PORT = 587;
 	private static final String CRLF = "\r\n";
+        private Properties props = new Properties();
 	
 	/* Are we connected? Used in close() to determine what to do. */
 	private boolean isConnected = false;
@@ -27,6 +37,7 @@ public class SMTPConnection {
 	/* Create an SMTPConnection object. Create the socket and the
     associated streams. Initialize SMTP connection. */
 	public SMTPConnection(Envelope envelope) throws IOException {
+                
 		connection = new Socket(envelope.DestAddr, SMTP_PORT);
 		fromServer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		toServer = new DataOutputStream(connection.getOutputStream());
@@ -41,6 +52,40 @@ public class SMTPConnection {
 		sendCommand("HELO " + localhost, 250);
 		isConnected = true;
 	}
+        
+        public SMTPConnection(Envelope envelope, ParamsEmail params, Usuario user) throws MessagingException {
+            
+            this.props = params.getProperties();
+            
+            // Get the Session object.
+            Session session = Session.getInstance(props,
+            new javax.mail.Authenticator() {
+               protected PasswordAuthentication getPasswordAuthentication() {
+                  return new PasswordAuthentication(user.getEmail(), user.getSenha());
+               }
+            });
+
+            // Create a default MimeMessage object.
+            Message message = new MimeMessage(session);
+
+            // Set From: header field of the header.
+            message.setFrom(new InternetAddress(envelope.Message.getFrom()));
+
+            // Set To: header field of the header.
+            message.setRecipients(Message.RecipientType.TO,
+            InternetAddress.parse(envelope.Message.getTo()));
+
+            // Set Subject: header field
+            message.setSubject(envelope.Message.subject);
+
+            // Now set the actual message
+            message.setText(envelope.Message.Body);
+
+            // Send message
+            Transport.send(message);
+
+            System.out.println("Sent message successfully....");
+        }
 	
 	/* Send the message. Write the correct SMTP-commands in the
         correct order. No checking for errors, just throw them to the
