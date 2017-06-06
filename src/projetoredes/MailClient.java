@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.mail.Session;
 /**
  *
  * @author Lavid
@@ -34,6 +35,7 @@ public class MailClient extends Frame{
     private TextField subjectField = new TextField("", 40);
     private Label messageLabel = new Label("Message:");
     private TextArea messageText = new TextArea(10, 40);
+    
 
     /**
      * Create a new MailClient window with fields for entering all
@@ -41,6 +43,7 @@ public class MailClient extends Frame{
      */
     public MailClient() {
         super("Java Mailclient");
+        
         /* Create panels for holding the fields. To make it look nice,
            create an extra panel for holding all the child panels. */
         Panel serverPanel = new Panel(new BorderLayout());

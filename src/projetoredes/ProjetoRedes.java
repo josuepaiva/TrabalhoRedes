@@ -21,7 +21,6 @@ public class ProjetoRedes {
     
     public static void main(String[] args) {
         
-   
         new MailClient();
     }
     

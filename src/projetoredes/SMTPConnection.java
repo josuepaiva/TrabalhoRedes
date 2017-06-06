@@ -64,7 +64,8 @@ public class SMTPConnection {
                   return new PasswordAuthentication(user.getEmail(), user.getSenha());
                }
             });
-
+            
+            session.setDebug(true);
             // Create a default MimeMessage object.
             Message message = new MimeMessage(session);
 
